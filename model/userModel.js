@@ -13,13 +13,14 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
     required: true,
   },
   dateOfBirth: {
-    type: Number,
+    type: Date,
     required: true,
   },
   fatherName: {
@@ -45,6 +46,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  documents: {
+    type: Array,
   },
   currentAddress: {
     street: {
