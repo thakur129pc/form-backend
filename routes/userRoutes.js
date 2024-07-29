@@ -5,10 +5,12 @@ import {
   getProfileInfo,
 } from "../controller/userController.js";
 import { verifyAuth } from "../middleware/auth.js";
+import multer from "multer";
 
 const router = express.Router();
+const upload = multer();
 
-router.post("/register", registerUser);
+router.post("/register", upload.none(), registerUser);
 router.post("/login", loginUser);
 router.post("/view-profile", verifyAuth, getProfileInfo);
 
