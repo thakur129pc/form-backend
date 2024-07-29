@@ -1,8 +1,9 @@
+import { comparePassword, hashPassword } from "../middleware/hash.js";
 import USER from "../model/userModel.js";
 import jwt from "jsonwebtoken";
 
 const registerUser = async (req, res) => {
-  const { email, username } = req.body;
+  const { email, username, password } = req.body;
 
   try {
     const existingUser = await USER.findOne({ $or: [{ email }, { username }] });
@@ -14,20 +15,15 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const user = new USER(req.body);
-    await user.save();
+    const increptedPassword = await hashPassword(password);
 
-    const accessToken = jwt.sign(
-      { username: username, email: user.email },
-      process.env.JWT_SECRET_TOKEN,
-      { expiresIn: "1D" }
-    );
+    const user = new USER({ ...req.body, password: increptedPassword });
+    await user.save();
 
     const responseUser = {
       name: user.fullName,
       email: user.email,
       username: user.username,
-      accessToken,
     };
 
     res.status(201).json({
@@ -76,10 +72,9 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // 4. Compare password securely (avoid plain text comparison)
-    // const isMatch = await user.comparePassword(password);
+    const isPasswordMatch = await comparePassword(password, user.password);
 
-    if (password !== user.password) {
+    if (!isPasswordMatch) {
       return res.status(401).json({
         success: false,
         message: "Invalid username or password",
@@ -117,14 +112,12 @@ const getProfileInfo = async (req, res) => {
   const { email } = req.user;
 
   try {
-    const user = await USER.findOne({ email }).select("-__v");
-
+    const user = await USER.findOne({ email }).select("-password -__v");
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-
     res.json({ success: true, user });
   } catch (error) {
     console.error(error);
