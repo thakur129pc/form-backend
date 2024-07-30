@@ -1,9 +1,11 @@
+import { unflattenObject } from "../helpers/unflattenObject.js";
 import { comparePassword, hashPassword } from "../middleware/hash.js";
 import USER from "../model/userModel.js";
 import jwt from "jsonwebtoken";
 
 const registerUser = async (req, res) => {
-  const { email, username, password } = req.body;
+  const data = unflattenObject(req.body);
+  const { email, username, password } = data;
 
   try {
     const existingUser = await USER.findOne({ $or: [{ email }, { username }] });
@@ -17,7 +19,7 @@ const registerUser = async (req, res) => {
 
     const increptedPassword = await hashPassword(password);
 
-    const user = new USER({ ...req.body, password: increptedPassword });
+    const user = new USER({ ...data, password: increptedPassword });
     await user.save();
 
     const responseUser = {

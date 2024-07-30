@@ -53,45 +53,45 @@ const userSchema = new mongoose.Schema({
   currentAddress: {
     street: {
       type: String,
-      // required: true,
+      required: true,
     },
     locality: {
       type: String,
-      // required: true,
+      required: true,
     },
     state: {
       type: String,
-      // required: true,
+      required: true,
     },
     district: {
       type: String,
-      // required: true,
+      required: true,
     },
     pin: {
       type: Number,
-      // required: true,
+      required: true,
     },
   },
   permanentAddress: {
     street: {
       type: String,
-      // required: true,
+      required: true,
     },
     locality: {
       type: String,
-      // required: true,
+      required: true,
     },
     state: {
       type: String,
-      // required: true,
+      required: true,
     },
     district: {
       type: String,
-      // required: true,
+      required: true,
     },
     pin: {
       type: Number,
-      // required: true,
+      required: true,
     },
   },
   photo: {
